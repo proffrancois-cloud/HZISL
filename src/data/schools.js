@@ -1,60 +1,58 @@
+import { publicAsset } from "../lib/appPaths.js";
+
 export const SCHOOLS = [
   {
     id: "HCAS",
+    displayName: "HCAS",
     name: "Hsinchu County American School",
     mascot: "Lions",
-    logoUrl: null,
-    logoSource: "https://www.hcas.tw/",
+    logoUrl: publicAsset("/schools/hcas.png"),
+    logoSource: "https://www.hcas.tw/lion_pride/",
+  },
+  {
+    id: "HIA",
+    displayName: "HIA",
+    name: "Hsinchu International Academy",
+    mascot: "Hion the Lion",
+    logoUrl: publicAsset("/schools/hia.png"),
+    logoSource: "https://www.hia.com.tw/post/hia-hion-line-stickers-now-available",
+  },
+  {
+    id: "PAS",
+    displayName: "PAS",
+    name: "Pacific American School",
+    mascot: "Typhoons",
+    logoUrl: publicAsset("/schools/pas.png"),
+    logoSource: "https://www.pacificamerican.org/",
   },
   {
     id: "HIS",
+    displayName: "HIS",
     name: "Hsinchu International School",
-    mascot: "Bamboo Lions",
-    logoUrl: null,
+    mascot: "Bamboo Lions · TBC",
+    logoUrl: publicAsset("/schools/his.png"),
     logoSource: "https://hdis.hc.edu.tw/",
   },
   {
     id: "HAS",
+    displayName: "HAS",
     name: "Hsinchu American School",
     mascot: "Wolves",
-    logoUrl: null,
+    logoUrl: publicAsset("/schools/has.jpg"),
     logoSource: "https://has.hc.edu.tw/athletics",
   },
   {
-    id: "LIFT",
-    name: "Lycée International Français de Taipei",
-    mascot: "Mascot TBC",
-    logoUrl: null,
-    logoSource: "https://lift.tw/",
-  },
-  {
-    id: "TES",
-    name: "Taipei European School",
-    mascot: "Formosan Bears",
-    logoUrl: null,
-    logoSource: "https://www.tes.tp.edu.tw/student-life/sports",
-  },
-  {
-    id: "TAS",
-    name: "Taipei American School",
-    mascot: "Tigers",
-    logoUrl: null,
-    logoSource: "https://www.tas.edu.tw/athletics",
-  },
-  {
-    id: "AST",
-    name: "American School in Taichung",
-    mascot: "Eagles",
-    logoUrl: null,
-    logoSource: "https://www.astaichung.com/",
-  },
-  {
-    id: "KCIS",
-    name: "Kang Chiao International School",
-    mascot: "Four Guardians · TBC",
-    logoUrl: null,
-    logoSource: "https://www.kcis.ntpc.edu.tw/_KangChiao/zh/Badge-Song.html",
+    id: "KA",
+    displayName: "Korrnell Academy",
+    name: "Korrnell Academy",
+    mascot: "Lions · TBC",
+    logoUrl: publicAsset("/schools/korrnell.png"),
+    logoSource: "https://www.korrnell.org/",
   },
 ];
 
 export const SCHOOL_BY_ID = Object.fromEntries(SCHOOLS.map((school) => [school.id, school]));
+
+export function getSchoolDisplayName(schoolId) {
+  return SCHOOL_BY_ID[schoolId]?.displayName ?? schoolId;
+}

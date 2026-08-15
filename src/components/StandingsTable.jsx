@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { getStandings } from "../data/standings.js";
+import { SCHOOL_BY_ID } from "../data/schools.js";
+import { SchoolLogo } from "./SchoolLogo.jsx";
 import { TeamDetails } from "./TeamDetails.jsx";
 
-export function StandingsTable({ sport }) {
+export function StandingsTable({ sport, throughMatchday }) {
   const [selectedTeam, setSelectedTeam] = useState(null);
-  const standings = getStandings(sport.id);
+  const standings = getStandings(sport.id, throughMatchday);
 
   return (
     <section className="panel standings-panel" aria-labelledby="standings-heading">
@@ -41,8 +43,8 @@ export function StandingsTable({ sport }) {
                     aria-expanded={selectedTeam === row.team}
                     onClick={() => setSelectedTeam((current) => current === row.team ? null : row.team)}
                   >
-                    <span className={`team-dot${row.team === "HCAS" ? " team-dot--hcas" : ""}`} aria-hidden="true" />
-                    {row.team}
+                    <SchoolLogo school={SCHOOL_BY_ID[row.team]} size="tiny" decorative />
+                    {SCHOOL_BY_ID[row.team]?.displayName ?? row.team}
                   </button>
                 </th>
                 <td className="points">{row.points}</td>

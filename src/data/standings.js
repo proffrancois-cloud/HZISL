@@ -1,39 +1,58 @@
 import { TEAMS } from "../lib/schedule.js";
+import { getResultsThroughMatchday, RESULTS_BY_SPORT } from "./results.js";
 
-const RECORDS = [
-  { played: 6, won: 4, drawn: 1, lost: 1, goalsFor: 15, goalsAgainst: 7, redCards: 0 },
-  { played: 6, won: 4, drawn: 0, lost: 2, goalsFor: 14, goalsAgainst: 8, redCards: 1 },
-  { played: 6, won: 3, drawn: 2, lost: 1, goalsFor: 12, goalsAgainst: 7, redCards: 0 },
-  { played: 6, won: 3, drawn: 1, lost: 2, goalsFor: 10, goalsAgainst: 8, redCards: 0 },
-  { played: 6, won: 2, drawn: 2, lost: 2, goalsFor: 9, goalsAgainst: 9, redCards: 1 },
-  { played: 6, won: 2, drawn: 0, lost: 4, goalsFor: 8, goalsAgainst: 12, redCards: 0 },
-  { played: 6, won: 1, drawn: 1, lost: 4, goalsFor: 6, goalsAgainst: 14, redCards: 2 },
-  { played: 6, won: 0, drawn: 1, lost: 5, goalsFor: 4, goalsAgainst: 13, redCards: 0 },
-];
+function createEmptyRecord(team) {
+  return {
+    team,
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    redCards: 0,
+  };
+}
 
-const TEAM_ORDERS = [
-  ["HCAS", "TAS", "TES", "HIS", "AST", "KCIS", "HAS", "LIFT"],
-  ["TAS", "HCAS", "HIS", "TES", "KCIS", "AST", "LIFT", "HAS"],
-  ["TES", "HIS", "HCAS", "TAS", "AST", "HAS", "KCIS", "LIFT"],
-  ["HCAS", "TES", "AST", "TAS", "HIS", "LIFT", "KCIS", "HAS"],
-  ["HIS", "TAS", "HCAS", "KCIS", "TES", "AST", "HAS", "LIFT"],
-  ["TAS", "TES", "HCAS", "AST", "HIS", "HAS", "LIFT", "KCIS"],
-  ["HCAS", "AST", "TES", "HIS", "TAS", "KCIS", "LIFT", "HAS"],
-  ["TES", "HCAS", "TAS", "HIS", "KCIS", "AST", "HAS", "LIFT"],
-];
+function applyResult(record, goalsFor, goalsAgainst, redCards) {
+  record.played += 1;
+  record.goalsFor += goalsFor;
+  record.goalsAgainst += goalsAgainst;
+  record.redCards += redCards ?? 0;
 
-export function getStandings(sportId) {
-  const seed = [...sportId].reduce((total, character) => total + character.charCodeAt(0), 0);
-  const teamOrder = TEAM_ORDERS[seed % TEAM_ORDERS.length];
+  if (goalsFor > goalsAgainst) record.won += 1;
+  else if (goalsFor === goalsAgainst) record.drawn += 1;
+  else record.lost += 1;
+}
 
-  return teamOrder.map((team, index) => {
-    const record = RECORDS[index];
-    return {
-      position: index + 1,
-      team,
+export function getStandings(
+  sportId,
+  throughMatchday = Number.POSITIVE_INFINITY,
+  resultsBySport = RESULTS_BY_SPORT,
+) {
+  const records = new Map(TEAMS.map((team) => [team, createEmptyRecord(team)]));
+  const results = getResultsThroughMatchday(sportId, throughMatchday, resultsBySport);
+
+  for (const result of results) {
+    const home = records.get(result.home);
+    const away = records.get(result.away);
+    if (!home || !away) continue;
+
+    applyResult(home, result.homeScore, result.awayScore, result.homeRedCards);
+    applyResult(away, result.awayScore, result.homeScore, result.awayRedCards);
+  }
+
+  return [...records.values()]
+    .map((record) => ({
       ...record,
       points: record.won * 3 + record.drawn,
       goalDifference: record.goalsFor - record.goalsAgainst,
-    };
-  }).filter((row) => TEAMS.includes(row.team));
+    }))
+    .sort((first, second) => (
+      second.points - first.points
+      || second.goalDifference - first.goalDifference
+      || second.goalsFor - first.goalsFor
+      || TEAMS.indexOf(first.team) - TEAMS.indexOf(second.team)
+    ))
+    .map((record, index) => ({ ...record, position: index + 1 }));
 }

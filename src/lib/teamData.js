@@ -1,5 +1,7 @@
 import { SPORTS } from "../data/sports.js";
 import { getStandings } from "../data/standings.js";
+import { getSchoolDisplayName } from "../data/schools.js";
+import { getMatchResult } from "../data/results.js";
 import {
   CURRENT_MATCHDAY_NUMBER,
   formatMatchdayDate,
@@ -7,28 +9,23 @@ import {
   MATCHDAYS,
 } from "./schedule.js";
 
-function stableScore(key, max) {
-  const value = [...key].reduce((total, character) => (total * 31 + character.charCodeAt(0)) % 9973, 7);
-  return value % max;
-}
-
 function fixtureForTeam(fixtures, teamId) {
   return fixtures.find((fixture) => fixture.home === teamId || fixture.away === teamId);
 }
 
-function resultForFixture(matchday, fixture, sportId, teamId) {
-  const homeScore = stableScore(`${sportId}-${matchday.number}-${fixture.home}`, 5);
-  const awayScore = stableScore(`${sportId}-${matchday.number}-${fixture.away}-away`, 4);
+function resultForFixture(matchday, fixture, result, teamId) {
   const teamIsHome = fixture.home === teamId;
-  const teamScore = teamIsHome ? homeScore : awayScore;
-  const opponentScore = teamIsHome ? awayScore : homeScore;
+  const opponentId = teamIsHome ? fixture.away : fixture.home;
+  const teamScore = teamIsHome ? result.homeScore : result.awayScore;
+  const opponentScore = teamIsHome ? result.awayScore : result.homeScore;
   const outcome = teamScore === opponentScore ? "D" : teamScore > opponentScore ? "W" : "L";
 
   return {
     matchday: matchday.number,
     date: matchday.date,
     dateLabel: formatMatchdayDate(matchday.date, { weekday: "short" }),
-    opponent: teamIsHome ? fixture.away : fixture.home,
+    opponentId,
+    opponent: getSchoolDisplayName(opponentId),
     homeAway: teamIsHome ? "Home" : "Away",
     score: `${teamScore}–${opponentScore}`,
     outcome,
@@ -41,12 +38,14 @@ function upcomingForFixture(matchday, fixture, sport, teamId) {
     sport,
   );
   const teamIsHome = fixture.home === teamId;
+  const opponentId = teamIsHome ? fixture.away : fixture.home;
 
   return {
     matchday: matchday.number,
     date: matchday.date,
     dateLabel: formatMatchdayDate(matchday.date, { weekday: "short" }),
-    opponent: teamIsHome ? fixture.away : fixture.home,
+    opponentId,
+    opponent: getSchoolDisplayName(opponentId),
     homeAway: teamIsHome ? "Home" : "Away",
     kickoff: details.kickoff,
     venue: details.venue,
@@ -55,21 +54,24 @@ function upcomingForFixture(matchday, fixture, sport, teamId) {
 
 export function getTeamSchedule(sport, teamId) {
   const completed = MATCHDAYS
-    .filter((matchday) => matchday.number < CURRENT_MATCHDAY_NUMBER)
     .map((matchday) => {
       const fixture = fixtureForTeam(matchday.fixtures, teamId);
-      return resultForFixture(matchday, fixture, sport.id, teamId);
+      const result = getMatchResult(sport.id, matchday.number, fixture.home, fixture.away);
+      return result ? resultForFixture(matchday, fixture, result, teamId) : null;
     })
+    .filter(Boolean)
     .slice(-3)
     .reverse();
 
   const upcoming = MATCHDAYS
     .filter((matchday) => matchday.number >= CURRENT_MATCHDAY_NUMBER)
-    .slice(0, 3)
     .map((matchday) => {
       const fixture = fixtureForTeam(matchday.fixtures, teamId);
+      if (getMatchResult(sport.id, matchday.number, fixture.home, fixture.away)) return null;
       return upcomingForFixture(matchday, fixture, sport, teamId);
-    });
+    })
+    .filter(Boolean)
+    .slice(0, 3);
 
   return { completed, upcoming };
 }

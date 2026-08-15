@@ -4,6 +4,7 @@ import { HomePage } from "./components/HomePage.jsx";
 import { OrganizationPage } from "./components/OrganizationPage.jsx";
 import { SportPage } from "./components/SportPage.jsx";
 import { getSport } from "./data/sports.js";
+import { fromBrowserPath, toBrowserPath } from "./lib/appPaths.js";
 
 function getRoute(pathname) {
   if (pathname === "/organization") return { type: "organization" };
@@ -16,20 +17,21 @@ function getRoute(pathname) {
 }
 
 export default function App() {
-  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const [currentPath, setCurrentPath] = useState(fromBrowserPath(window.location.pathname));
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [notice, setNotice] = useState("");
   const route = useMemo(() => getRoute(currentPath), [currentPath]);
 
   const navigate = useCallback((href) => {
-    if (window.location.pathname !== href) window.history.pushState({}, "", href);
+    const browserPath = toBrowserPath(href);
+    if (window.location.pathname !== browserPath) window.history.pushState({}, "", browserPath);
     setCurrentPath(href);
     window.scrollTo({ top: 0, behavior: "smooth" });
     window.requestAnimationFrame(() => document.getElementById("main-content")?.focus({ preventScroll: true }));
   }, []);
 
   useEffect(() => {
-    const onPopState = () => setCurrentPath(window.location.pathname);
+    const onPopState = () => setCurrentPath(fromBrowserPath(window.location.pathname));
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
@@ -51,7 +53,7 @@ export default function App() {
       {route.type === "sport" ? (
         <SportPage sport={route.sport} onNavigate={navigate} onNotice={setNotice} />
       ) : null}
-      {route.type === "organization" ? <OrganizationPage onNotice={setNotice} /> : null}
+      {route.type === "organization" ? <OrganizationPage /> : null}
       {notice ? <div className="toast" role="status">{notice}</div> : null}
     </AppShell>
   );

@@ -1,16 +1,14 @@
 # School identity research
 
-Checked on 2026-08-15. The interface uses neutral initial placeholders until each school authorizes its exact logo for ISLT publication.
+Checked on 2026-08-15. The local prototype uses logo files served by each school's official website. Confirm permission and final athletics naming before public launch.
 
 | School | Display identity | Official evidence | Logo status |
 | --- | --- | --- | --- |
-| HCAS | HCAS Lions | https://www.hcas.tw/about-us/accreditation-and-awards/ | Official site located; permission required |
-| HIS | HIS Bamboo Lions | https://hdis.hc.edu.tw/ | Official logo located; mascot wording needs school confirmation |
-| HAS | HAS Wolves | https://has.hc.edu.tw/athletics | Official athletics identity confirmed; permission required |
-| LIFT | LIFT · Mascot TBC | https://lift.tw/ | Official logo located; no public mascot found |
-| TES | TES Formosan Bears | https://www.tes.tp.edu.tw/student-life/sports | Official mascot confirmed; permission required |
-| TAS | TAS Tigers | https://www.tas.edu.tw/athletics | Official athletics identity confirmed; TAS approval required by its brand page |
-| AST | AST Eagles | https://www.astaichung.com/ | Official school identity confirmed; logo file needs approval |
-| KCIS | KCIS Four Guardians · TBC | https://www.kcis.ntpc.edu.tw/_KangChiao/zh/Badge-Song.html | Official badge located; sports identity needs school confirmation |
+| HCAS | HCAS Lions | https://www.hcas.tw/lion_pride/ | Official school logo and Lion Pride naming |
+| HIA | HIA Hion the Lion | https://www.hia.com.tw/post/hia-hion-line-stickers-now-available | Official school logo and Hion mascot naming |
+| PAS | PAS Typhoons | https://www.pacificamerican.org/ | Official school logo; Typhoons appears in the official crest |
+| HIS | HIS Bamboo Lions · TBC | https://hdis.hc.edu.tw/ | Official school logo; mascot wording still needs school confirmation |
+| HAS | HAS Wolves | https://has.hc.edu.tw/athletics | Official Wolves athletics identity |
+| Korrnell Academy | Korrnell Academy Lions · TBC | https://www.korrnell.org/ | Official crest uses lions; athletics mascot wording still needs confirmation |
 
-Do not replace `logoUrl: null` in `src/data/schools.js` until an approved asset has been supplied. This avoids hotlinking or republishing third-party trademarks without permission.
+Local copies live in `public/schools/` so the interface does not hotlink them. The links above remain the source record for each asset.
