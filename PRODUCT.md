@@ -6,11 +6,11 @@ product
 
 ## Users
 
-Students, families, coaches, activity coordinators, and staff from the eight ISLT schools checking fixtures and standings, often quickly on a phone while travelling to or attending a Saturday game.
+Students, families, coaches, activity coordinators, and staff from the six HZISL schools in Hsinchu and Zhubei checking fixtures and standings, often quickly on a phone while travelling to or attending a Saturday game.
 
 ## Product Purpose
 
-Provide one reliable, glanceable place for the International Schools League in Taiwan football and basketball divisions. Success means a visitor can find the next matchday, venue, kickoff time, standings, rules, and organization contacts without needing an explanation.
+Provide one reliable, glanceable place for the Hsinchu–Zhubei International Schools League football and basketball divisions. Success means a visitor can find the next matchday, venue, kickoff time, standings, rules, and organization contacts without needing an explanation.
 
 ## Brand Personality
 
@@ -26,7 +26,8 @@ Avoid sports-news clutter, betting-site density, oversized promotional copy, ani
 - Keep MS and HS pairings visibly consistent.
 - Make every sport reachable in one action.
 - Make every school summary and team history reachable in one action.
-- Treat Finals Day as a planned league-wide event after the 14-matchday season.
+- Keep standings empty until matchday results are recorded.
+- Place Finals Day after Matchday 10 inside the matchday selector.
 - Use school identity with restraint.
 - Design for a fast check outdoors on a phone.
 

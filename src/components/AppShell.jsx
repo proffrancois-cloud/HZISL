@@ -1,24 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  CalendarDays,
+  ChevronDown,
   ChevronRight,
-  CircleDot,
   House,
   Menu,
-  Trophy,
   UsersRound,
   X,
 } from "lucide-react";
-import { SPORTS_BY_GAME } from "../data/sports.js";
+import { GAME_DETAILS, SIDEBAR_GAMES, SPORTS_BY_GAME } from "../data/sports.js";
+import { toBrowserPath } from "../lib/appPaths.js";
 import { BrandMark } from "./BrandMark.jsx";
-
-const GAME_LABELS = { football: "Football", basketball: "Basketball" };
+import { SportLogo } from "./SportLogo.jsx";
 
 function NavLink({ href, active, onNavigate, children, icon: Icon }) {
   return (
     <a
       className={`nav-link${active ? " is-active" : ""}`}
-      href={href}
+      href={toBrowserPath(href)}
       aria-current={active ? "page" : undefined}
       onClick={(event) => {
         event.preventDefault();
@@ -35,6 +33,10 @@ function NavLink({ href, active, onNavigate, children, icon: Icon }) {
 export function AppShell({ children, currentPath, isMenuOpen, onMenuChange, onNavigate }) {
   const closeButtonRef = useRef(null);
   const [isMobile, setIsMobile] = useState(() => window.matchMedia("(max-width: 960px)").matches);
+  const activeGame = SIDEBAR_GAMES.find((game) =>
+    (SPORTS_BY_GAME[game] ?? []).some((sport) => currentPath === `/sports/${sport.id}`),
+  );
+  const [openGame, setOpenGame] = useState(activeGame ?? null);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 960px)");
@@ -46,6 +48,10 @@ export function AppShell({ children, currentPath, isMenuOpen, onMenuChange, onNa
   useEffect(() => {
     if (isMenuOpen) closeButtonRef.current?.focus();
   }, [isMenuOpen]);
+
+  useEffect(() => {
+    if (activeGame) setOpenGame(activeGame);
+  }, [activeGame]);
 
   useEffect(() => {
     if (!isMobile || !isMenuOpen) return undefined;
@@ -86,14 +92,14 @@ export function AppShell({ children, currentPath, isMenuOpen, onMenuChange, onNa
         </button>
         <a
           className="mobile-brand"
-          href="/"
+          href={toBrowserPath("/")}
           onClick={(event) => {
             event.preventDefault();
             navigate("/");
           }}
         >
           <BrandMark compact />
-          <span>ISLT</span>
+          <span>HZISL</span>
         </a>
         <span className="season-badge">26/27</span>
       </header>
@@ -117,7 +123,7 @@ export function AppShell({ children, currentPath, isMenuOpen, onMenuChange, onNa
         <div className="sidebar__header">
           <a
             className="sidebar__brand"
-            href="/"
+            href={toBrowserPath("/")}
             onClick={(event) => {
               event.preventDefault();
               navigate("/");
@@ -125,8 +131,8 @@ export function AppShell({ children, currentPath, isMenuOpen, onMenuChange, onNa
           >
             <BrandMark />
             <span>
-              <strong>ISLT</strong>
-              <small>Schools League Taiwan</small>
+              <strong>HZISL</strong>
+              <small>Hsinchu–Zhubei League</small>
             </span>
           </a>
           <button
@@ -145,26 +151,44 @@ export function AppShell({ children, currentPath, isMenuOpen, onMenuChange, onNa
             Home
           </NavLink>
 
-          <div className="nav-section">
-            <p className="nav-section__label"><Trophy size={14} aria-hidden="true" /> Sports</p>
-            {Object.entries(SPORTS_BY_GAME).map(([game, sports]) => (
-              <div className="nav-game" key={game}>
-                <p className="nav-game__label">
-                  {game === "football" ? <CircleDot size={13} aria-hidden="true" /> : <CalendarDays size={13} aria-hidden="true" />}
-                  {GAME_LABELS[game]}
-                </p>
-                {sports.map((sport) => (
-                  <NavLink
-                    key={sport.id}
-                    href={`/sports/${sport.id}`}
-                    active={currentPath === `/sports/${sport.id}`}
-                    onNavigate={navigate}
+          <div className="nav-section nav-section--games">
+            {SIDEBAR_GAMES.map((game) => {
+              const details = GAME_DETAILS[game];
+              const sports = SPORTS_BY_GAME[game] ?? [];
+              const isOpen = openGame === game;
+
+              return (
+                <div className={`nav-game${isOpen ? " is-open" : ""}`} key={game}>
+                  <button
+                    className="nav-game__trigger"
+                    type="button"
+                    aria-expanded={isOpen}
+                    aria-controls={`nav-game-${game}`}
+                    onClick={() => setOpenGame((current) => current === game ? null : game)}
                   >
-                    {sport.shortTitle}
-                  </NavLink>
-                ))}
-              </div>
-            ))}
+                    <SportLogo game={game} size="menu" decorative />
+                    <span>{details.label}</span>
+                    <ChevronDown size={15} aria-hidden="true" />
+                  </button>
+                  {isOpen ? (
+                    <div className="nav-game__content" id={`nav-game-${game}`}>
+                      {details.hasCompetitions ? sports.map((sport) => (
+                        <NavLink
+                          key={sport.id}
+                          href={`/sports/${sport.id}`}
+                          active={currentPath === `/sports/${sport.id}`}
+                          onNavigate={navigate}
+                        >
+                          {sport.shortTitle}
+                        </NavLink>
+                      )) : (
+                        <p className="nav-game__empty">No competitions organized yet</p>
+                      )}
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
           </div>
         </nav>
 

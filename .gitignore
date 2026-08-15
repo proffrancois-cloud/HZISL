@@ -5,3 +5,5 @@ dist
 .playwright-cli
 output/playwright
 *.local
+__pycache__/
+*.pyc

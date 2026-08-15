@@ -1,6 +1,8 @@
-export const TEAMS = ["HCAS", "HIS", "HAS", "LIFT", "TES", "TAS", "AST", "KCIS"];
+import { getSchoolDisplayName } from "../data/schools.js";
+
+export const TEAMS = ["HCAS", "HIA", "PAS", "HIS", "HAS", "KA"];
 export const SEASON_START = "2026-09-05";
-export const CURRENT_MATCHDAY_NUMBER = 7;
+export const CURRENT_MATCHDAY_NUMBER = 1;
 
 const VENUE_AREAS = {
   football: { Boys: "Main Field", Girls: "Field 2" },
@@ -57,23 +59,18 @@ export function buildRoundRobin(teams = TEAMS, seasonStart = SEASON_START) {
 export const MATCHDAYS = buildRoundRobin();
 
 export const FINALS_DAY = {
-  date: addDays(SEASON_START, 14 * 7),
-  title: "ISLT Finals Day",
+  date: addDays(SEASON_START, MATCHDAYS.length * 7),
+  title: "HZISL Finals Day",
   status: "Planning",
-  matchups: [
-    { seedA: 1, seedB: 8 },
-    { seedA: 2, seedB: 7 },
-    { seedA: 3, seedB: 6 },
-    { seedA: 4, seedB: 5 },
-  ],
+  note: "6-school knockout format to confirm",
 };
 
 export function getKickoff(level) {
-  return level === "MS" ? "08:00" : "09:30";
+  return level === "MS" ? "09:00" : "10:30";
 }
 
 export function getVenue(homeTeam, game, gender) {
-  return `${homeTeam} · ${VENUE_AREAS[game][gender]}`;
+  return `${getSchoolDisplayName(homeTeam)} · ${VENUE_AREAS[game][gender]}`;
 }
 
 export function getFixturesForDivision(matchday, division) {

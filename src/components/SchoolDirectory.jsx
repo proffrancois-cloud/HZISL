@@ -1,22 +1,25 @@
 import { useState } from "react";
-import { CalendarDays, ChevronDown, MapPin, Trophy } from "lucide-react";
-import { SCHOOLS } from "../data/schools.js";
+import { CalendarDays, ChevronDown, Mail, MapPin, Trophy } from "lucide-react";
+import { CONTACT_BY_SCHOOL } from "../data/organization.js";
+import { SCHOOLS, SCHOOL_BY_ID } from "../data/schools.js";
 import { getSchoolCompetitionOverview } from "../lib/teamData.js";
 import { SchoolLogo } from "./SchoolLogo.jsx";
+import { SportLogo } from "./SportLogo.jsx";
 
 export function SchoolDirectory({ onNavigate }) {
   const [selectedSchoolId, setSelectedSchoolId] = useState(null);
   const selectedSchool = SCHOOLS.find((school) => school.id === selectedSchoolId);
   const overview = selectedSchool ? getSchoolCompetitionOverview(selectedSchool.id) : [];
+  const selectedContact = selectedSchool ? CONTACT_BY_SCHOOL[selectedSchool.id] : null;
 
   return (
     <section className="school-directory" aria-labelledby="schools-heading">
       <div className="section-heading">
         <div>
           <h2 id="schools-heading">Schools</h2>
-          <p>8 ISLT members</p>
+          <p>6 Hsinchu–Zhubei members</p>
         </div>
-        <span className="plum-chip" aria-hidden="true">✿ Taiwan</span>
+        <span className="plum-chip" aria-hidden="true">✿ Hsinchu · Zhubei</span>
       </div>
 
       <div className="school-grid">
@@ -30,7 +33,7 @@ export function SchoolDirectory({ onNavigate }) {
           >
             <SchoolLogo school={school} />
             <span>
-              <strong>{school.id} {school.mascot}</strong>
+              <strong>{school.displayName} {school.mascot}</strong>
               <small>{school.name}</small>
             </span>
             <ChevronDown size={17} aria-hidden="true" />
@@ -43,9 +46,16 @@ export function SchoolDirectory({ onNavigate }) {
           <header>
             <div>
               <SchoolLogo school={selectedSchool} size="large" />
-              <span><strong>{selectedSchool.id} {selectedSchool.mascot}</strong><small>Next fixtures · all divisions</small></span>
+              <span><strong>{selectedSchool.displayName} {selectedSchool.mascot}</strong><small>Next fixtures · all divisions</small></span>
             </div>
-            <span className="school-overview__count">8 teams</span>
+            <div className="school-overview__actions">
+              {selectedContact ? (
+                <a className="school-contact-link" href={`mailto:${selectedContact.email}`}>
+                  <Mail size={13} aria-hidden="true" /> Contact coordinator
+                </a>
+              ) : null}
+              <span className="school-overview__count">8 teams</span>
+            </div>
           </header>
           <div className="school-team-list">
             {overview.map(({ sport, position, points, nextMatch }) => (
@@ -55,11 +65,12 @@ export function SchoolDirectory({ onNavigate }) {
                 key={sport.id}
                 onClick={() => onNavigate(`/sports/${sport.id}`)}
               >
-                <span className={`sport-mini sport-mini--${sport.game}`} aria-hidden="true">
-                  {sport.game === "football" ? "F" : "B"}
-                </span>
+                <SportLogo game={sport.game} size="tiny" decorative />
                 <span className="school-team-row__sport"><strong>{sport.title}</strong><small>Matchday {nextMatch.matchday}</small></span>
-                <span className="school-team-row__fixture"><strong>{nextMatch.homeAway === "Home" ? "vs" : "@"} {nextMatch.opponent}</strong><small><CalendarDays size={12} /> {nextMatch.dateLabel} · {nextMatch.kickoff}</small></span>
+                <span className="school-team-row__fixture">
+                  <span className="school-team-row__opponent"><SchoolLogo school={SCHOOL_BY_ID[nextMatch.opponentId]} size="tiny" decorative /><strong>{nextMatch.homeAway === "Home" ? "vs" : "@"} {nextMatch.opponent}</strong></span>
+                  <small><CalendarDays size={12} /> {nextMatch.dateLabel} · {nextMatch.kickoff}</small>
+                </span>
                 <span className="school-team-row__venue"><MapPin size={13} /> {nextMatch.venue}</span>
                 <span className="school-team-row__rank"><Trophy size={13} /><strong>#{position}</strong><small>{points} pts</small></span>
               </button>

@@ -26,21 +26,23 @@ Use Inter when available, then the system sans-serif stack. Keep one type family
 - Desktop: 248px fixed navigation rail and a flexible content pane.
 - Mobile: compact top bar and an off-canvas navigation drawer.
 - Content width: 1440px maximum.
-- Sport overview: two grouped lists, not an identical tile grid.
+- Home: News first, then logo-only Football and Basketball disclosure controls, then the school directory.
 - Competition page: standings and matchday panel in a 3:2 split, stacking below 1000px.
 - Spacing scale: 4, 8, 12, 16, 24, 32, 48.
 
 ## Components
 
 - Navigation rows are 44px minimum with a clear selected state.
+- Each sport name in the navigation opens its own category list; sports without a season show a plain, non-clickable empty state.
 - Buttons and selects are 40px minimum, 10px radius, and use a strong focus ring.
 - Panels use either a quiet border or a compact shadow, never both.
 - Tables keep the team column sticky on narrow screens and allow horizontal scroll.
 - Match rows use typographic alignment and a small time block instead of decorative cards.
 - Rules and organization actions use text-and-icon chips with explicit labels.
-- Schools use a compact logo, acronym, and mascot row with a single expandable competition summary.
-- Finals Day uses one red tournament strip with four seeded pairings and clearly marked TBC details.
-- The general ISLT mascot logo anchors the app shell and favicon; the football and basketball variants identify their competition groups and detail pages.
+- Contacts use a dedicated navigation item nested under Organization.
+- Schools use a compact logo, acronym, and mascot row with a single expandable competition summary and a coordinator email link.
+- Finals Day appears only as the final option in each matchday selector.
+- The general HZISL mascot logo anchors the app shell and favicon; the football and basketball variants identify their competition groups and detail pages.
 
 ## Motion
 
