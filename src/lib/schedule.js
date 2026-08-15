@@ -1,5 +1,6 @@
 export const TEAMS = ["HCAS", "HIS", "HAS", "LIFT", "TES", "TAS", "AST", "KCIS"];
 export const SEASON_START = "2026-09-05";
+export const CURRENT_MATCHDAY_NUMBER = 7;
 
 const VENUE_AREAS = {
   football: { Boys: "Main Field", Girls: "Field 2" },
@@ -55,6 +56,18 @@ export function buildRoundRobin(teams = TEAMS, seasonStart = SEASON_START) {
 
 export const MATCHDAYS = buildRoundRobin();
 
+export const FINALS_DAY = {
+  date: addDays(SEASON_START, 14 * 7),
+  title: "ISLT Finals Day",
+  status: "Planning",
+  matchups: [
+    { seedA: 1, seedB: 8 },
+    { seedA: 2, seedB: 7 },
+    { seedA: 3, seedB: 6 },
+    { seedA: 4, seedB: 5 },
+  ],
+};
+
 export function getKickoff(level) {
   return level === "MS" ? "08:00" : "09:30";
 }
@@ -71,15 +84,8 @@ export function getFixturesForDivision(matchday, division) {
   }));
 }
 
-export function getUpcomingMatchday(matchdays = MATCHDAYS, now = new Date()) {
-  const today = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Taipei",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(now);
-
-  return matchdays.find((matchday) => matchday.date >= today) ?? matchdays.at(-1);
+export function getUpcomingMatchday(matchdays = MATCHDAYS, currentNumber = CURRENT_MATCHDAY_NUMBER) {
+  return matchdays.find((matchday) => matchday.number === currentNumber) ?? matchdays.at(-1);
 }
 
 export function formatMatchdayDate(dateISO, options = {}) {

@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { getStandings } from "../data/standings.js";
+import { TeamDetails } from "./TeamDetails.jsx";
 
-export function StandingsTable({ sportId }) {
-  const standings = getStandings(sportId);
+export function StandingsTable({ sport }) {
+  const [selectedTeam, setSelectedTeam] = useState(null);
+  const standings = getStandings(sport.id);
 
   return (
     <section className="panel standings-panel" aria-labelledby="standings-heading">
@@ -29,13 +32,18 @@ export function StandingsTable({ sportId }) {
           </thead>
           <tbody>
             {standings.map((row) => (
-              <tr key={row.team} className={row.team === "HCAS" ? "is-hcas" : ""}>
+              <tr key={row.team} className={`${row.team === "HCAS" ? "is-hcas" : ""}${selectedTeam === row.team ? " is-selected" : ""}`}>
                 <td><span className="position">{row.position}</span></td>
                 <th scope="row">
-                  <span className="team-cell">
+                  <button
+                    className="team-cell"
+                    type="button"
+                    aria-expanded={selectedTeam === row.team}
+                    onClick={() => setSelectedTeam((current) => current === row.team ? null : row.team)}
+                  >
                     <span className={`team-dot${row.team === "HCAS" ? " team-dot--hcas" : ""}`} aria-hidden="true" />
                     {row.team}
-                  </span>
+                  </button>
                 </th>
                 <td className="points">{row.points}</td>
                 <td>{row.played}</td>
@@ -49,6 +57,7 @@ export function StandingsTable({ sportId }) {
           </tbody>
         </table>
       </div>
+      {selectedTeam ? <TeamDetails sport={sport} teamId={selectedTeam} onClose={() => setSelectedTeam(null)} /> : null}
     </section>
   );
 }

@@ -8,8 +8,23 @@ export const WELCOME_STEPS = [
 ];
 
 export const CONTACTS = [
-  { role: "Competition coordinator", name: "To be confirmed", detail: "Add email" },
-  { role: "Football coordinator", name: "To be confirmed", detail: "Add email" },
-  { role: "Basketball coordinator", name: "To be confirmed", detail: "Add email" },
-  { role: "Matchday emergencies", name: "To be confirmed", detail: "Add phone" },
+  { role: "ISLT coordinator", school: "ISLT", email: "TEST@isltcoordinator.com" },
+  { role: "HCAS referent", school: "HCAS", email: "TEST@hcaslions.com" },
+  { role: "HIS referent", school: "HIS", email: "TEST@hisbamboolions.com" },
+  { role: "HAS referent", school: "HAS", email: "TEST@haswolves.com" },
+  { role: "LIFT referent", school: "LIFT", email: "TEST@liftmascottbc.com" },
+  { role: "TES referent", school: "TES", email: "TEST@tesformosanbears.com" },
+  { role: "TAS referent", school: "TAS", email: "TEST@tastigers.com" },
+  { role: "AST referent", school: "AST", email: "TEST@asteagles.com" },
+  { role: "KCIS referent", school: "KCIS", email: "TEST@kcisfourguardians.com" },
 ];
+
+export const DOCUMENTS = [
+  "MS Football",
+  "HS Football",
+  "MS Basketball",
+  "HS Basketball",
+  "Host a game",
+  "ISLT general rules",
+  "ISLT agreement",
+].map((title) => ({ title, url: null }));

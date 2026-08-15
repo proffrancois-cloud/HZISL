@@ -8,6 +8,7 @@ import {
   Repeat2,
 } from "lucide-react";
 import { getUpcomingMatchday, MATCHDAYS } from "../lib/schedule.js";
+import { FinalsDayPanel } from "./FinalsDayPanel.jsx";
 import { MatchdayPanel } from "./MatchdayPanel.jsx";
 import { StandingsTable } from "./StandingsTable.jsx";
 
@@ -50,9 +51,12 @@ export function SportPage({ sport, onNavigate, onNotice }) {
 
       <header className="sport-heading">
         <div>
-          <span className={`sport-icon sport-icon--${sport.game}`} aria-hidden="true">
-            {isFootball ? "F" : "B"}
-          </span>
+          <img
+            className="sport-brand-logo sport-brand-logo--heading"
+            src={`/brand/islt-${sport.game}.png`}
+            alt=""
+            aria-hidden="true"
+          />
           <div>
             <p>{sport.level === "MS" ? "Middle School" : "High School"} · {sport.gender}</p>
             <h1>{sport.game === "football" ? "Football" : "Basketball"}</h1>
@@ -62,7 +66,7 @@ export function SportPage({ sport, onNavigate, onNotice }) {
       </header>
 
       <div className="competition-grid">
-        <StandingsTable sportId={sport.id} />
+        <StandingsTable sport={sport} />
         <MatchdayPanel
           selectedNumber={selectedMatchday}
           sport={sport}
@@ -91,6 +95,8 @@ export function SportPage({ sport, onNavigate, onNotice }) {
           </span>
         </div>
       </section>
+
+      <FinalsDayPanel />
     </div>
   );
 }

@@ -51,7 +51,7 @@ export default function App() {
       {route.type === "sport" ? (
         <SportPage sport={route.sport} onNavigate={navigate} onNotice={setNotice} />
       ) : null}
-      {route.type === "organization" ? <OrganizationPage /> : null}
+      {route.type === "organization" ? <OrganizationPage onNotice={setNotice} /> : null}
       {notice ? <div className="toast" role="status">{notice}</div> : null}
     </AppShell>
   );

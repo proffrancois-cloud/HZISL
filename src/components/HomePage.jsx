@@ -1,10 +1,12 @@
-import { ArrowRight, CircleDot, Trophy } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { SPORTS_BY_GAME } from "../data/sports.js";
-import { formatMatchdayDate, getUpcomingMatchday, TEAMS } from "../lib/schedule.js";
+import { formatMatchdayDate, getUpcomingMatchday } from "../lib/schedule.js";
+import { FinalsDayPanel } from "./FinalsDayPanel.jsx";
+import { SchoolDirectory } from "./SchoolDirectory.jsx";
 
 const GROUP_DETAILS = {
-  football: { label: "Football", icon: CircleDot },
-  basketball: { label: "Basketball", icon: Trophy },
+  football: { label: "Football", logo: "/brand/islt-football.png" },
+  basketball: { label: "Basketball", logo: "/brand/islt-basketball.png" },
 };
 
 export function HomePage({ onNavigate }) {
@@ -25,11 +27,15 @@ export function HomePage({ onNavigate }) {
 
       <div className="sport-directory">
         {Object.entries(SPORTS_BY_GAME).map(([game, sports]) => {
-          const Icon = GROUP_DETAILS[game].icon;
           return (
             <section className="sport-group" key={game} aria-labelledby={`${game}-heading`}>
               <div className="sport-group__heading">
-                <span className={`sport-icon sport-icon--${game}`}><Icon size={22} aria-hidden="true" /></span>
+                <img
+                  className="sport-brand-logo"
+                  src={GROUP_DETAILS[game].logo}
+                  alt=""
+                  aria-hidden="true"
+                />
                 <div>
                   <h2 id={`${game}-heading`}>{GROUP_DETAILS[game].label}</h2>
                   <p>4 divisions</p>
@@ -61,10 +67,8 @@ export function HomePage({ onNavigate }) {
         })}
       </div>
 
-      <footer className="schools-strip" aria-label="Participating schools">
-        <span>8 schools</span>
-        <div>{TEAMS.map((team) => <span key={team}>{team}</span>)}</div>
-      </footer>
+      <FinalsDayPanel compact />
+      <SchoolDirectory onNavigate={onNavigate} />
     </div>
   );
 }

@@ -14,7 +14,7 @@ Provide one reliable, glanceable place for the International Schools League in T
 
 ## Brand Personality
 
-Direct, spirited, dependable. The interface should feel like an established school competition: energetic enough for students, calm enough for staff to trust.
+Direct, spirited, dependable, and distinctly Taiwanese. The interface should feel like an international school competition: energetic enough for students, calm enough for staff to trust, with a small kawaii touch in its blossom motif.
 
 ## Anti-references
 
@@ -25,6 +25,8 @@ Avoid sports-news clutter, betting-site density, oversized promotional copy, ani
 - Put the next useful fact first.
 - Keep MS and HS pairings visibly consistent.
 - Make every sport reachable in one action.
+- Make every school summary and team history reachable in one action.
+- Treat Finals Day as a planned league-wide event after the 14-matchday season.
 - Use school identity with restraint.
 - Design for a fast check outdoors on a phone.
 

@@ -18,11 +18,15 @@ npm run verify
 ## Edit the season
 
 - Sports and labels: `src/data/sports.js`
-- Schools, season start, matchdays, and venues: `src/lib/schedule.js`
+- School names, mascots, and approved logos: `src/data/schools.js`
+- Season start, current matchday, fixtures, venues, and Finals Day: `src/lib/schedule.js`
 - Standings sample data: `src/data/standings.js`
 - Organization content: `src/data/organization.js`
+- ISLT visual identity: `public/brand/islt-main.png`, `islt-football.png`, and `islt-basketball.png`
 
 Rules buttons are ready for PDF URLs. Add the PDFs under `public/rules/`, then set each sport's `rulesUrl` in `src/data/sports.js`.
+
+School identity research is documented in `SCHOOL_SOURCES.md`. Keep `logoUrl` empty until each school has supplied or approved an asset for league use.
 
 ## Deploy on Vercel
 
