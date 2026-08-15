@@ -7,6 +7,7 @@ export const CURRENT_MATCHDAY_NUMBER = 1;
 const VENUE_AREAS = {
   football: { Boys: "Main Field", Girls: "Field 2" },
   basketball: { Boys: "Court 1", Girls: "Court 2" },
+  volleyball: { Boys: "Volleyball Court 1", Girls: "Volleyball Court 2" },
 };
 
 function addDays(dateISO, days) {

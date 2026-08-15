@@ -30,6 +30,7 @@ export function getStandings(
   throughMatchday = Number.POSITIVE_INFINITY,
   resultsBySport = RESULTS_BY_SPORT,
 ) {
+  const game = sportId.split("-")[0];
   const records = new Map(TEAMS.map((team) => [team, createEmptyRecord(team)]));
   const results = getResultsThroughMatchday(sportId, throughMatchday, resultsBySport);
 
@@ -45,7 +46,9 @@ export function getStandings(
   return [...records.values()]
     .map((record) => ({
       ...record,
-      points: record.won * 3 + record.drawn,
+      points: game === "football"
+        ? record.won * 3 + record.drawn
+        : record.won * 2 + record.lost,
       goalDifference: record.goalsFor - record.goalsAgainst,
     }))
     .sort((first, second) => (

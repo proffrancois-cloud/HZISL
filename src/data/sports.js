@@ -4,6 +4,8 @@ const FOOTBALL_RULES = publicAsset("/documents/HZISL_Football_Rules_2026-27.docx
 const FOOTBALL_REPORT = publicAsset("/documents/HZISL_Official_Match_Report_Football_2026-27.docx");
 const BASKETBALL_RULES = publicAsset("/documents/HZISL_Basketball_Rules_2026-27.docx");
 const BASKETBALL_REPORT = publicAsset("/documents/HZISL_Official_Match_Report_Basketball_2026-27.docx");
+const VOLLEYBALL_RULES = publicAsset("/documents/HZISL_Volleyball_Rules_2026-27.docx");
+const VOLLEYBALL_REPORT = publicAsset("/documents/HZISL_Official_Match_Report_Volleyball_Tennis_Table_Tennis_2026-27.docx");
 
 export const SPORTS = [
   {
@@ -86,6 +88,46 @@ export const SPORTS = [
     rulesUrl: BASKETBALL_RULES,
     reportUrl: BASKETBALL_REPORT,
   },
+  {
+    id: "volleyball-ms-boys",
+    game: "volleyball",
+    level: "MS",
+    gender: "Boys",
+    title: "MS Boys Volleyball",
+    shortTitle: "MS Boys",
+    rulesUrl: VOLLEYBALL_RULES,
+    reportUrl: VOLLEYBALL_REPORT,
+  },
+  {
+    id: "volleyball-hs-boys",
+    game: "volleyball",
+    level: "HS",
+    gender: "Boys",
+    title: "HS Boys Volleyball",
+    shortTitle: "HS Boys",
+    rulesUrl: VOLLEYBALL_RULES,
+    reportUrl: VOLLEYBALL_REPORT,
+  },
+  {
+    id: "volleyball-ms-girls",
+    game: "volleyball",
+    level: "MS",
+    gender: "Girls",
+    title: "MS Girls Volleyball",
+    shortTitle: "MS Girls",
+    rulesUrl: VOLLEYBALL_RULES,
+    reportUrl: VOLLEYBALL_REPORT,
+  },
+  {
+    id: "volleyball-hs-girls",
+    game: "volleyball",
+    level: "HS",
+    gender: "Girls",
+    title: "HS Girls Volleyball",
+    shortTitle: "HS Girls",
+    rulesUrl: VOLLEYBALL_RULES,
+    reportUrl: VOLLEYBALL_REPORT,
+  },
 ];
 
 export const GAME_DETAILS = {
@@ -102,7 +144,7 @@ export const GAME_DETAILS = {
   volleyball: {
     label: "Volleyball",
     logoUrl: publicAsset("/brand/hzisl-sports-library/hzisl-volleyball.png"),
-    hasCompetitions: false,
+    hasCompetitions: true,
   },
   "table-tennis": {
     label: "Ping Pong",

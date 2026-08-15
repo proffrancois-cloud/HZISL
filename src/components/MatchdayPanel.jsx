@@ -1,4 +1,4 @@
-import { CalendarDays, Clock3, MapPin } from "lucide-react";
+import { CalendarDays, Clock3, FileDown, MapPin } from "lucide-react";
 import { getMatchResult } from "../data/results.js";
 import { SCHOOL_BY_ID, getSchoolDisplayName } from "../data/schools.js";
 import {
@@ -8,6 +8,7 @@ import {
   getUpcomingMatchday,
   MATCHDAYS,
 } from "../lib/schedule.js";
+import { getMatchReportUrl } from "../lib/matchReports.js";
 import { SchoolLogo } from "./SchoolLogo.jsx";
 
 export function MatchdayPanel({ selectedNumber, sport, onSelect }) {
@@ -84,10 +85,21 @@ export function MatchdayPanel({ selectedNumber, sport, onSelect }) {
                     <SchoolLogo school={SCHOOL_BY_ID[fixture.away]} size="fixture" decorative />
                   </span>
                 </div>
-                <span className="fixture__venue">
-                  <MapPin size={14} aria-hidden="true" />
-                  {fixture.venue}
-                </span>
+                <div className="fixture__meta">
+                  <span className="fixture__venue">
+                    <MapPin size={14} aria-hidden="true" />
+                    {fixture.venue}
+                  </span>
+                  <a
+                    className="fixture__report"
+                    href={getMatchReportUrl(sport, matchday, fixture)}
+                    download
+                    title={`Download prefilled match report for ${fixture.home} vs ${fixture.away}`}
+                  >
+                    <FileDown size={14} aria-hidden="true" />
+                    Download DOCX
+                  </a>
+                </div>
               </article>
             );
           })}
