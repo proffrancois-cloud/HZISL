@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, ClipboardCheck, FileText } from "lucide-react";
-import { publicAsset, toBrowserPath } from "../lib/appPaths.js";
+import { toBrowserPath } from "../lib/appPaths.js";
+import { GAME_DETAILS } from "../data/sports.js";
 import { getUpcomingMatchday, MATCHDAYS } from "../lib/schedule.js";
 import { MatchdayPanel } from "./MatchdayPanel.jsx";
+import { SportLogo } from "./SportLogo.jsx";
 import { StandingsTable } from "./StandingsTable.jsx";
 
 function DocumentAction({ href, label, icon: Icon, unavailableMessage, onNotice }) {
@@ -48,15 +50,10 @@ export function SportPage({ sport, onNavigate, onNotice }) {
 
       <header className="sport-heading">
         <div>
-          <img
-            className="sport-brand-logo sport-brand-logo--heading"
-            src={publicAsset(`/brand/hzisl-${sport.game}.png`)}
-            alt=""
-            aria-hidden="true"
-          />
+          <SportLogo game={sport.game} size="heading" decorative />
           <div>
             <p>{sport.level === "MS" ? "Middle School" : "High School"} · {sport.gender}</p>
-            <h1>{sport.game === "football" ? "Football" : "Basketball"}</h1>
+            <h1>{GAME_DETAILS[sport.game].label}</h1>
           </div>
         </div>
         <div className="sport-document-actions" aria-label="Competition documents">
@@ -69,7 +66,7 @@ export function SportPage({ sport, onNavigate, onNotice }) {
           />
           <DocumentAction
             href={sport.reportUrl}
-            label="Match report"
+            label="Blank match report"
             icon={ClipboardCheck}
             unavailableMessage="The official match report is unavailable."
             onNotice={onNotice}

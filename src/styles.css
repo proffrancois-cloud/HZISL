@@ -353,6 +353,7 @@ h1, h2 { text-wrap: balance; }
 .sport-logo img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .sport-logo--menu { width: 30px; height: 34px; border-radius: 7px; }
 .sport-logo--home { width: 104px; height: 120px; }
+.sport-logo--heading { width: 66px; height: 77px; }
 .sport-logo--tiny { width: 28px; height: 31px; border-radius: 6px; }
 .sport-logo--document { width: 32px; height: 36px; border-radius: 7px; }
 
@@ -533,6 +534,24 @@ tbody th { font-size: 13px; }
 .fixture__score { color: var(--navy-dark); font-size: 15px; font-variant-numeric: tabular-nums; }
 
 .fixture__venue { display: flex; align-items: center; gap: 5px; color: var(--muted); font-size: 10px; }
+
+.fixture__meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+
+.fixture__report {
+  display: inline-flex;
+  min-height: 32px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: var(--navy);
+  background: var(--surface-soft);
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.fixture__report:hover { color: var(--navy-dark); background: var(--navy-soft); }
 
 .finals-dropdown-content {
   display: flex;

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 from typing import Iterable, Sequence
 
@@ -17,6 +18,7 @@ BRAND_DIR = ROOT / "public" / "brand"
 
 SEASON = "2026–27"
 VERSION = "1.0"
+SPORT_RULES_VERSION = "1.1"
 ISSUE_DATE = "15 August 2026"
 REVIEW_DATE = "30 June 2027"
 
@@ -46,6 +48,8 @@ FIBA_2024_URL = (
     "documents-corporate-fiba-official-rules-2024-v10a.pdf"
 )
 FIBA_RULES_HUB_URL = "https://refereeing.fiba.basketball/en/rules"
+FIVB_RULES_URL = "https://www.fivb.com/wp-content/uploads/2025/01/FIVB-Volleyball_Rules2025_2028-EN.pdf"
+FIVB_BASIC_RULES_URL = "https://www.fivb.com/volleyball/the-game/basic-rules/"
 
 
 def _set_run_font(
@@ -364,11 +368,19 @@ def _apply_numbering(paragraph, num_id: int) -> None:
 
 
 class HZDocument:
-    def __init__(self, title: str, short_title: str, logo: str = "hzisl-main.png") -> None:
+    def __init__(
+        self,
+        title: str,
+        short_title: str,
+        logo: str = "hzisl-main.png",
+        *,
+        version: str = VERSION,
+    ) -> None:
         self.doc = Document()
         self.title = title
         self.short_title = short_title
         self.logo_path = BRAND_DIR / logo
+        self.version = version
         _configure_styles(self.doc)
         self.bullet_num, self.decimal_num, self.decimal_abstract = _add_numbering(self.doc)
         self._configure_document()
@@ -388,8 +400,8 @@ class HZDocument:
         core.title = self.title
         core.subject = f"HZISL {SEASON} competition document"
         core.author = "Hsinchu–Zhubei International Schools League"
-        core.keywords = "HZISL, interschool sports, football, basketball"
-        core.comments = f"Version {VERSION}; issued {ISSUE_DATE}; review {REVIEW_DATE}."
+        core.keywords = "HZISL, interschool sports, football, basketball, volleyball"
+        core.comments = f"Version {self.version}; issued {ISSUE_DATE}; review {REVIEW_DATE}."
 
         header = section.header
         header.is_linked_to_previous = False
@@ -410,7 +422,7 @@ class HZDocument:
         fp.paragraph_format.space_before = Pt(0)
         fp.paragraph_format.space_after = Pt(0)
         fp.paragraph_format.tab_stops.add_tab_stop(Inches(6.0))
-        left = fp.add_run(f"Official competition document  •  v{VERSION}  •  {ISSUE_DATE}")
+        left = fp.add_run(f"Official competition document  •  v{self.version}  •  {ISSUE_DATE}")
         _set_run_font(left, size=8.5, color=MUTED)
         page_label = fp.add_run("\tPage ")
         _set_run_font(page_label, size=8.5, color=MUTED)
@@ -441,7 +453,7 @@ class HZDocument:
         meta = self.doc.add_paragraph()
         meta.alignment = WD_ALIGN_PARAGRAPH.CENTER if not compact else WD_ALIGN_PARAGRAPH.LEFT
         meta.paragraph_format.space_after = Pt(14)
-        mr = meta.add_run(f"Season {SEASON}  •  Version {VERSION}  •  Effective 5 September 2026")
+        mr = meta.add_run(f"Season {SEASON}  •  Version {self.version}  •  Effective 5 September 2026")
         _set_run_font(mr, size=9.5, bold=True, color=MUTED)
 
     def add_heading(self, text: str, level: int = 1, *, page_break_before: bool = False) -> None:
@@ -558,7 +570,7 @@ def build_handbook() -> Path:
     d = HZDocument("Competition Handbook & Operating Statutes", "Handbook")
     d.add_cover(
         "League governance and operations",
-        "The common framework for every HZISL football and basketball division.",
+        "The common framework for every HZISL football, basketball and volleyball division.",
     )
     d.add_callout(
         "Core promise",
@@ -576,7 +588,7 @@ def build_handbook() -> Path:
     )
     d.add_bullets([
         "Member schools for the 2026–27 season: HCAS, HIA, PAS, HIS, HAS and Korrnell Academy (KA).",
-        "Sports: football and basketball.",
+        "Sports: football, basketball and volleyball.",
         "Divisions: MS Boys, MS Girls, HS Boys and HS Girls in each sport.",
         "Season structure: a home-and-away round robin over 10 matchdays, followed by a separately published Finals Day format.",
         "Normal matchdays are Saturday mornings; MS fixtures start at 09:00 and HS fixtures at 10:30 unless the published schedule states otherwise.",
@@ -656,6 +668,7 @@ def build_handbook() -> Path:
     d.add_bullets([
         "Football: the referee controls the match from pre-match inspection through submission of the report.",
         "Basketball: the referee crew controls play; the scorer and timer maintain the table record under the crew’s authority.",
+        "Volleyball: the referee crew controls play; the scorer records rotations, set scores, substitutions and sanctions under the crew’s authority.",
         "Coaches communicate respectfully through the permitted channel and keep substitutes and spectators under control.",
         "Abuse, threats, discriminatory conduct or unauthorized entry onto the playing area is reported immediately and may lead to removal and further sanction.",
     ])
@@ -689,7 +702,7 @@ def build_handbook() -> Path:
         "Both head coaches review the score and recorded sanctions and sign the form. A signature confirms the record was received; it does not waive a timely protest.",
         "The host sends the completed report to the Coordinator within 30 minutes of the final whistle/buzzer, or as soon as connectivity allows.",
         "The Coordinator verifies and publishes the result. If the app differs from the signed report, the signed report controls until formally amended.",
-        "League-table methods and sport-specific forfeits are stated in the Football Rules and Basketball Rules. The published app table is provisional until the season is certified."
+        "League-table methods and sport-specific forfeits are stated in the Football, Basketball and Volleyball Rules. The published app table is provisional until the season is certified."
     ])
     d.add_heading("11. Protests and review")
     d.add_bullets([
@@ -706,7 +719,7 @@ def build_handbook() -> Path:
         "A written HZISL season bulletin approved under these statutes.",
         "The HZISL sport-specific rules for the match concerned.",
         "This Handbook for general league operations.",
-        "The incorporated IFAB or FIBA rules, only where HZISL has not made a local modification.",
+        "The incorporated IFAB, FIBA or FIVB rules, only where HZISL has not made a local modification.",
     ])
     d.add_para(
         "Material in-season changes should be avoided. A safety correction may take immediate effect; other changes apply from the date stated in the written notice."
@@ -714,18 +727,24 @@ def build_handbook() -> Path:
     d.add_heading("Official references")
     d.add_source("IFAB Laws of the Game 2026/27", IFAB_URL, "football baseline, accessed 15 August 2026")
     d.add_source("FIBA Official Basketball Rules 2024", FIBA_2024_URL, "basketball baseline retained for the full HZISL season unless a written bulletin says otherwise")
+    d.add_source("FIVB Official Volleyball Rules 2025–2028", FIVB_RULES_URL, "volleyball baseline, subject to the published HZISL local modifications")
     return d.save("HZISL_Competition_Handbook_2026-27.docx")
 
 
 def build_football_rules() -> Path:
-    d = HZDocument("Football Competition Rules", "Football Rules", "hzisl-football.png")
+    d = HZDocument(
+        "Football Competition Rules",
+        "Football Rules",
+        "hzisl-football.png",
+        version=SPORT_RULES_VERSION,
+    )
     d.add_cover(
         "Sport regulations",
         "Applies to MS Boys, MS Girls, HS Boys and HS Girls.",
     )
     d.add_callout(
         "Match format",
-        "11-a-side • 2 × 40-minute halves • 10-minute half-time • league matches may finish as a draw.",
+        "6-a-side • unlimited return substitutions • 2 × 40-minute halves • 10-minute half-time • league matches may finish as a draw.",
     )
     d.add_heading("1. Governing code")
     d.add_para(
@@ -736,7 +755,7 @@ def build_football_rules() -> Path:
     d.add_table(
         ["Item", "HZISL rule"],
         [
-            ["Players", "11 per team, including one goalkeeper. A match may not start or continue with fewer than 7."],
+            ["Players", "6 on the field per team, including one goalkeeper. A team must have 6 ready to start; a match may not continue with fewer than 4."],
             ["Matchday roster", "Maximum 18 eligible players, plus authorized team staff."],
             ["Duration", "Two equal halves of 40 minutes."],
             ["Half-time", "10 minutes; changed only with the referee’s permission for safety or facility necessity."],
@@ -749,7 +768,7 @@ def build_football_rules() -> Path:
     )
     d.add_heading("3. Field, goals and ball")
     d.add_bullets([
-        "The host provides a safely marked natural or artificial surface appropriate for 11-a-side play. The referee may require hazards to be removed or may refuse an unsafe field.",
+        "The host provides a safely marked natural or artificial surface appropriate for 6-a-side play. The referee may require hazards to be removed or may refuse an unsafe field.",
         "Goals must be securely anchored. Nets, corner markings and technical areas should be provided where practicable.",
         "A size 5 match ball in good condition is used in every division. The host supplies at least two match-quality spare balls.",
         "Where local field dimensions differ, both teams are informed before matchday. The same safe field is used for comparable divisions whenever practicable.",
@@ -764,7 +783,7 @@ def build_football_rules() -> Path:
 
     d.add_heading("5. Substitutions")
     d.add_bullets([
-        "HZISL uses unlimited return substitutions from the named matchday roster to support safe youth participation.",
+        "There is no limit on the number of substitutions. HZISL uses unlimited return substitutions from the named matchday roster to support safe youth participation.",
         "A substitution is made during a stoppage, at the halfway line, after the referee is informed and signals entry.",
         "A substituted player may return later. All players and substitutes remain under the referee’s authority.",
         "A goalkeeper change requires the referee’s permission and occurs during a stoppage.",
@@ -814,14 +833,19 @@ def build_football_rules() -> Path:
 
 
 def build_basketball_rules() -> Path:
-    d = HZDocument("Basketball Competition Rules", "Basketball Rules", "hzisl-basketball.png")
+    d = HZDocument(
+        "Basketball Competition Rules",
+        "Basketball Rules",
+        "hzisl-basketball.png",
+        version=SPORT_RULES_VERSION,
+    )
     d.add_cover(
         "Sport regulations",
         "Applies to MS Boys, MS Girls, HS Boys and HS Girls.",
     )
     d.add_callout(
         "Game format",
-        "5-a-side • 4 × 8-minute quarters • 4-minute quarter intervals • 10-minute half-time • 3-minute overtime periods.",
+        "5-a-side • unlimited substitutions • 4 × 8-minute quarters • 4-minute quarter intervals • 10-minute half-time • 3-minute overtime periods.",
     )
     d.add_heading("1. Governing code")
     d.add_para(
@@ -866,7 +890,7 @@ def build_basketball_rules() -> Path:
     ])
     d.add_heading("6. Substitutions and time-outs")
     d.add_bullets([
-        "Substitutions are unlimited among the 12 named players and occur during a substitution opportunity after the scorer’s signal and referee authorization.",
+        "There is no limit on the number of substitutions. Any of the 12 named players may enter during a substitution opportunity after the scorer’s signal and referee authorization.",
         "Each team may use 2 time-outs in the first half, 3 in the second half (no more than 2 in the final 2 minutes of Q4) and 1 in each overtime.",
         "Unused time-outs do not carry into the next half or overtime.",
         "An injured or bleeding player is managed under FIBA procedure and the school medical protocol. A suspected concussion or serious injury ends participation for the day unless appropriately cleared."
@@ -906,6 +930,109 @@ def build_basketball_rules() -> Path:
     d.add_source("FIBA Official Basketball Rules 2024", FIBA_2024_URL, "the HZISL baseline for the full 2026–27 season")
     d.add_source("FIBA rules resource hub", FIBA_RULES_HUB_URL, "official rules and interpretations")
     return d.save("HZISL_Basketball_Rules_2026-27.docx")
+
+
+def build_volleyball_rules() -> Path:
+    d = HZDocument(
+        "Volleyball Competition Rules",
+        "Volleyball Rules",
+        "hzisl-sports-library/hzisl-volleyball.png",
+        version=SPORT_RULES_VERSION,
+    )
+    d.add_cover(
+        "Sport regulations",
+        "Applies to MS Boys, MS Girls, HS Boys and HS Girls.",
+    )
+    d.add_callout(
+        "Match format",
+        "6-a-side • best of 3 sets • sets 1–2 to 25 • deciding set to 15 • win by 2 • unlimited substitutions.",
+    )
+    d.add_heading("1. Governing code")
+    d.add_para(
+        "HZISL uses the FIVB Official Volleyball Rules 2025–2028 as its baseline for the 2026–27 season, with the local modifications below. "
+        "These local rules control where they differ from FIVB. The HZISL Competition Handbook controls league administration, eligibility, safety and protests."
+    )
+    d.add_heading("2. Match and team format")
+    d.add_table(
+        ["Item", "HZISL rule"],
+        [
+            ["Players", "6 on court per team. A team must have 6 eligible players ready to start."],
+            ["Matchday roster", "Maximum 14 eligible players, including up to 2 designated liberos, plus authorized team staff."],
+            ["Match format", "Best of 3 sets. The first team to win 2 sets wins the match."],
+            ["Set scoring", "Sets 1 and 2 are played to 25 points; a deciding third set is played to 15. Every set must be won by 2 points, with no cap."],
+            ["Intervals", "3 minutes between sets. The referee may extend an interval only for safety or facility necessity."],
+            ["League tie", "A volleyball match cannot finish as a draw."],
+        ],
+        [2050, 7310],
+        body_size=9.35,
+    )
+    d.add_heading("3. Court, net and ball")
+    d.add_bullets([
+        "The host provides a safe 18 × 9 metre court where practicable, visible boundary lines, safe free space, protected posts, team benches and a controlled scorer’s table.",
+        "Net height is 2.43 m for Boys divisions and 2.24 m for Girls divisions unless HZISL publishes a division-specific safety adjustment before the season.",
+        "The host supplies an approved indoor volleyball in good condition and at least one serviceable spare of the same type.",
+        "The referee may require hazards to be removed, adjust a non-material local marking issue with both coaches informed, or refuse an unsafe court.",
+    ])
+    d.add_heading("4. Uniforms and equipment")
+    d.add_bullets([
+        "Teams wear matching numbered shirts and distinguishable colours. A libero wears a clearly contrasting shirt.",
+        "Non-marking court footwear is required. Knee pads are strongly recommended.",
+        "Jewellery and unsafe equipment are not permitted. Medical or religious coverings must be safe and approved at the referee’s inspection.",
+        "If colours conflict, the home team changes or uses safe numbered bibs unless another solution was agreed in advance.",
+    ])
+
+    d.add_heading("5. Rotation, service and playing the ball")
+    d.add_bullets([
+        "Rally scoring is used. The team winning a rally scores 1 point and serves next.",
+        "Six starting players rotate one position clockwise when their team wins the right to serve after receiving.",
+        "A team may use up to 3 contacts to return the ball, in addition to a block contact. A player may not make two consecutive contacts except where FIVB rules permit it after a block or on one continuous action.",
+        "The ball may touch the net while crossing on service or during a rally. A served ball must be contacted from behind the end line after the referee’s authorization.",
+        "Position, rotation, service order, net-contact, centre-line, attack-line and back-row restrictions follow the FIVB baseline.",
+    ])
+    d.add_heading("6. Unlimited substitutions and libero")
+    d.add_bullets([
+        "There is no limit on the number of substitutions in a set or match. A substituted player may return later and may exchange with any eligible teammate.",
+        "Substitutions occur only while the ball is out of play, after the scorer is ready and the referee authorizes entry. Teams must not use repeated requests to delay play.",
+        "All substitutions are recorded by the scorer even though they are unlimited. A player may participate only if named on the certified matchday roster.",
+        "Libero replacements are not counted as substitutions and otherwise follow FIVB libero procedure, including contrasting uniform and back-row restrictions.",
+        "A suspected concussion or serious injury is managed under the school medical protocol; student welfare overrides competitive considerations.",
+    ])
+    d.add_heading("7. Time-outs, officials and conduct")
+    d.add_bullets([
+        "Each team may request 2 time-outs of 30 seconds in each set. Unused time-outs do not carry to another set.",
+        "The first referee controls play. The second referee and scorer support substitutions, rotations, time-outs, sanctions and the official score.",
+        "Delay warnings, delay penalties, misconduct sanctions and expulsion/disqualification follow the FIVB baseline. Serious conduct is also reported under the HZISL discipline process.",
+        "There is no video challenge system in HZISL matches. Referee decisions on facts connected with play are final.",
+    ])
+    d.add_heading("8. Forfeit, suspension and safety")
+    d.add_bullets([
+        "A team unable to field 6 ready players within 15 minutes after the scheduled start normally forfeits 0–2, with sets recorded 0–25, subject to Coordinator review of exceptional circumstances.",
+        "A team declared incomplete during play loses the set or match under the FIVB baseline, with the opponent receiving the points and sets needed to win.",
+        "A match may be suspended for unsafe court conditions, medical emergency, facility intrusion, severe behaviour or another serious risk.",
+        "The officials and host record the set score, point score and reason for a suspension. The Coordinator decides whether the match resumes, is replayed, stands or is forfeited.",
+    ])
+
+    d.add_heading("9. Results and standings", page_break_before=True)
+    d.add_table(
+        ["Result", "League points"],
+        [["Win", "2"], ["Loss after playing", "1"], ["Forfeit/default", "0"]],
+        [6200, 3160],
+        alignments=[WD_ALIGN_PARAGRAPH.LEFT, WD_ALIGN_PARAGRAPH.CENTER],
+    )
+    d.add_para(
+        "Teams are ranked by league points, then matches won, head-to-head result among tied teams, set difference, point difference, sets won, points scored and, if still required for a final placing, a neutral playoff or draw determined by the Council."
+    )
+    d.add_heading("10. Match report and protest")
+    d.add_numbered([
+        "The scorer and referee crew reconcile each set score, the final sets won, substitutions, sanctions and exceptional incidents.",
+        "Both coaches review and sign the Official Match Report immediately after the match.",
+        "A coach notes an intention to protest before signing when practicable; the school representative submits the written protest within 24 hours.",
+        "A protest may concern eligibility, administration or a rules-application error. It does not reopen an ordinary referee judgement on facts connected with play.",
+    ])
+    d.add_heading("Official references")
+    d.add_source("FIVB Official Volleyball Rules 2025–2028", FIVB_RULES_URL, "the international baseline for HZISL volleyball")
+    d.add_source("FIVB basic rules", FIVB_BASIC_RULES_URL, "official overview of scoring, rotation and play")
+    return d.save("HZISL_Volleyball_Rules_2026-27.docx")
 
 
 def build_host_guide() -> Path:
@@ -1063,7 +1190,7 @@ def build_match_report() -> Path:
     )
     _field_table(d, [
         ("Match", "Date: __________________  Matchday: ______  Scheduled start: ______  Actual finish: ______"),
-        ("Competition", "□ Football  □ Basketball     □ MS  □ HS     □ Boys  □ Girls"),
+        ("Competition", "□ Football  □ Basketball  □ Volleyball     □ MS  □ HS     □ Boys  □ Girls"),
         ("Venue", "____________________________________________________________________________"),
         ("Teams", "Home: ____________________________________   Away: ____________________________________"),
         ("Officials", "Lead referee: ______________________________   Other official(s): ___________________________"),
@@ -1080,7 +1207,7 @@ def build_match_report() -> Path:
         alignments=[WD_ALIGN_PARAGRAPH.LEFT] + [WD_ALIGN_PARAGRAPH.CENTER] * 6,
     )
     d.add_para(
-        "Football: use H1/H2 and FINAL. Basketball: use P1–P4, OT if needed, and FINAL.",
+        "Football: use H1/H2 and FINAL. Basketball: use P1–P4, OT if needed, and FINAL. Volleyball: use set columns and FINAL.",
         size=8.5,
         color=MUTED,
         italic=True,
@@ -1129,7 +1256,7 @@ def build_agreement() -> Path:
         ("Member school", "____________________________________________________________________________"),
         ("School representative", "Name: __________________________  Role: __________________________"),
         ("Contact", "Email: ______________________________  Mobile: _________________________"),
-        ("Participating teams", "□ Football MS Boys  □ MS Girls  □ HS Boys  □ HS Girls\n□ Basketball MS Boys  □ MS Girls  □ HS Boys  □ HS Girls"),
+        ("Participating teams", "□ Football MS Boys  □ MS Girls  □ HS Boys  □ HS Girls\n□ Basketball MS Boys  □ MS Girls  □ HS Boys  □ HS Girls\n□ Volleyball MS Boys  □ MS Girls  □ HS Boys  □ HS Girls"),
     ])
     d.add_heading("1. Purpose")
     d.add_para(
@@ -1192,7 +1319,7 @@ def build_roster() -> Path:
     )
     _field_table(d, [
         ("School / team", "School: ______________________________  Team name: ______________________________"),
-        ("Competition", "□ Football  □ Basketball     □ MS  □ HS     □ Boys  □ Girls"),
+        ("Competition", "□ Football  □ Basketball  □ Volleyball     □ MS  □ HS     □ Boys  □ Girls"),
         ("Staff", "Head coach: __________________________  School representative: _______________________"),
         ("Contacts", "Coach mobile: ________________________  Representative email: ________________________"),
     ], body_size=9.0)
@@ -1246,7 +1373,7 @@ def build_incident_report() -> Path:
     )
     _field_table(d, [
         ("Match", "Date: __________________  Matchday: ______  Start time: ______  Incident time: ______"),
-        ("Competition", "□ Football  □ Basketball     □ MS  □ HS     □ Boys  □ Girls"),
+        ("Competition", "□ Football  □ Basketball  □ Volleyball     □ MS  □ HS     □ Boys  □ Girls"),
         ("Venue / teams", "Venue: __________________________  Home: __________________  Away: __________________"),
         ("Report type", "□ Injury  □ Ejection/discipline  □ Conduct  □ Facility/safety  □ Safeguarding  □ Other"),
         ("Reporter", "Name: __________________________  Role/school: __________________  Mobile: ______________"),
@@ -1323,17 +1450,27 @@ def build_incident_report() -> Path:
 
 
 def main() -> None:
-    builders = [
-        build_handbook,
-        build_football_rules,
-        build_basketball_rules,
-        build_host_guide,
-        build_match_report,
-        build_agreement,
-        build_roster,
-        build_incident_report,
-    ]
-    paths = [builder() for builder in builders]
+    builders = {
+        "handbook": build_handbook,
+        "football-rules": build_football_rules,
+        "basketball-rules": build_basketball_rules,
+        "volleyball-rules": build_volleyball_rules,
+        "host-guide": build_host_guide,
+        "match-report": build_match_report,
+        "agreement": build_agreement,
+        "roster": build_roster,
+        "incident-report": build_incident_report,
+    }
+    parser = argparse.ArgumentParser(description="Build HZISL competition DOCX files.")
+    parser.add_argument(
+        "--only",
+        nargs="+",
+        choices=tuple(builders),
+        help="Build only the named documents. Without this option, every document is built.",
+    )
+    args = parser.parse_args()
+    selected = args.only or list(builders)
+    paths = [builders[name]() for name in selected]
     for path in paths:
         print(path)
 

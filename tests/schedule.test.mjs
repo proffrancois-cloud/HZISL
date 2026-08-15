@@ -10,6 +10,7 @@ import {
 } from "../src/lib/schedule.js";
 import { GAME_DETAILS, SIDEBAR_GAMES, SPORTS } from "../src/data/sports.js";
 import { getStandings } from "../src/data/standings.js";
+import { getMatchReportFilename, getMatchReportLogicalPath } from "../src/lib/matchReports.js";
 import { getSchoolCompetitionOverview, getTeamSchedule } from "../src/lib/teamData.js";
 
 test("builds 10 matchdays with three fixtures each", () => {
@@ -81,7 +82,6 @@ test("keeps future sports in the navigation without competitions", () => {
   const futureGames = SIDEBAR_GAMES.filter((game) => !GAME_DETAILS[game].hasCompetitions);
 
   assert.deepEqual(futureGames, [
-    "volleyball",
     "table-tennis",
     "tennis",
     "chess",
@@ -90,6 +90,31 @@ test("keeps future sports in the navigation without competitions", () => {
     "fencing",
   ]);
   assert.ok(futureGames.every((game) => GAME_DETAILS[game].logoUrl));
+});
+
+test("publishes four divisions for each active sport", () => {
+  const activeGames = SIDEBAR_GAMES.filter((game) => GAME_DETAILS[game].hasCompetitions);
+
+  assert.deepEqual(activeGames, ["football", "basketball", "volleyball"]);
+  assert.equal(SPORTS.length, 12);
+  for (const game of activeGames) {
+    assert.equal(SPORTS.filter((sport) => sport.game === game).length, 4);
+  }
+});
+
+test("assigns volleyball courts and deterministic match-report filenames", () => {
+  const sport = SPORTS.find((item) => item.id === "volleyball-ms-girls");
+  const matchday = MATCHDAYS[0];
+  const [fixture] = getFixturesForDivision(matchday, sport);
+  const filename = getMatchReportFilename(sport, matchday, fixture);
+
+  assert.match(fixture.venue, /Volleyball Court 2$/);
+  assert.match(filename, /^HZISL_Volleyball_MS_Girls_MD01_2026-09-05_/);
+  assert.match(filename, /_Official_Match_Report_2026-27\.docx$/);
+  assert.equal(
+    getMatchReportLogicalPath(sport, matchday, fixture),
+    `/documents/matches/${sport.id}/${filename}`,
+  );
 });
 
 test("provides recent and upcoming fixtures for a selected team", () => {
@@ -131,6 +156,19 @@ test("calculates standings only from results through the selected matchday", () 
   assert.equal(afterMatchdayOne.find((row) => row.team === "PAS").played, 0);
   assert.equal(afterMatchdayTwo.find((row) => row.team === "HCAS").points, 4);
   assert.equal(afterMatchdayTwo.find((row) => row.team === "PAS").played, 1);
+});
+
+test("uses two league points for a basketball or volleyball win and one for a played loss", () => {
+  for (const sportId of ["basketball-ms-boys", "volleyball-ms-boys"]) {
+    const standings = getStandings(sportId, 1, {
+      [sportId]: {
+        1: [{ home: "HCAS", away: "HIA", homeScore: 2, awayScore: 1 }],
+      },
+    });
+
+    assert.equal(standings.find((row) => row.team === "HCAS").points, 2);
+    assert.equal(standings.find((row) => row.team === "HIA").points, 1);
+  }
 });
 
 test("provides one ranking and next match for every school division", () => {

@@ -7,6 +7,9 @@ import { TeamDetails } from "./TeamDetails.jsx";
 export function StandingsTable({ sport, throughMatchday }) {
   const [selectedTeam, setSelectedTeam] = useState(null);
   const standings = getStandings(sport.id, throughMatchday);
+  const isFootball = sport.game === "football";
+  const differenceLabel = sport.game === "football" ? "GD" : sport.game === "basketball" ? "PD" : "SD";
+  const differenceTitle = sport.game === "football" ? "Goal difference" : sport.game === "basketball" ? "Point difference" : "Set difference";
 
   return (
     <section className="panel standings-panel" aria-labelledby="standings-heading">
@@ -26,10 +29,10 @@ export function StandingsTable({ sport, throughMatchday }) {
               <th scope="col" title="Points">PTS</th>
               <th scope="col" title="Played">P</th>
               <th scope="col" title="Won">W</th>
-              <th scope="col" title="Drawn">D</th>
+              {isFootball ? <th scope="col" title="Drawn">D</th> : null}
               <th scope="col" title="Lost">L</th>
-              <th scope="col" title="Goal difference">GD</th>
-              <th scope="col" title="Red cards">RC</th>
+              <th scope="col" title={differenceTitle}>{differenceLabel}</th>
+              {isFootball ? <th scope="col" title="Red cards">RC</th> : null}
             </tr>
           </thead>
           <tbody>
@@ -50,10 +53,10 @@ export function StandingsTable({ sport, throughMatchday }) {
                 <td className="points">{row.points}</td>
                 <td>{row.played}</td>
                 <td>{row.won}</td>
-                <td>{row.drawn}</td>
+                {isFootball ? <td>{row.drawn}</td> : null}
                 <td>{row.lost}</td>
                 <td>{row.goalDifference > 0 ? `+${row.goalDifference}` : row.goalDifference}</td>
-                <td className={row.redCards > 0 ? "discipline" : ""}>{row.redCards}</td>
+                {isFootball ? <td className={row.redCards > 0 ? "discipline" : ""}>{row.redCards}</td> : null}
               </tr>
             ))}
           </tbody>

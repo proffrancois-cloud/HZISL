@@ -1,0 +1,26 @@
+{
+  "HCAS": {
+    "headCoach": "FAKE NAME + [HCAS]",
+    "leadOfficial": "FAKE NAME + [HCAS]"
+  },
+  "HIA": {
+    "headCoach": "FAKE NAME + [HIA]",
+    "leadOfficial": "FAKE NAME + [HIA]"
+  },
+  "PAS": {
+    "headCoach": "FAKE NAME + [PAS]",
+    "leadOfficial": "FAKE NAME + [PAS]"
+  },
+  "HIS": {
+    "headCoach": "FAKE NAME + [HIS]",
+    "leadOfficial": "FAKE NAME + [HIS]"
+  },
+  "HAS": {
+    "headCoach": "FAKE NAME + [HAS]",
+    "leadOfficial": "FAKE NAME + [HAS]"
+  },
+  "KA": {
+    "headCoach": "FAKE NAME + [KA]",
+    "leadOfficial": "FAKE NAME + [KA]"
+  }
+}
